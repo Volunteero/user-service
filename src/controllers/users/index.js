@@ -9,5 +9,6 @@ router.get('/', userHandler.getUsers);
 router.put('/find', userHandler.getUserByUsername);
 router.post('/', userHandler.createUser);
 router.put('/', userHandler.updateUser);
+router.put('/delete', userHandler.deleteUserByUsername);
 
 module.exports = router;

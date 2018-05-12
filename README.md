@@ -2,6 +2,8 @@
 The CRUD for the user data associated with the usernames  
 ## Internal  
 Build with `express` and `mongoose`   
+## Hosting  
+Hosted on Heroku as `volunteero-altar`: https://volunteero-altar.herokuapp.com/altar/v1/users  
 ## Routes  
 **POST**: `../altar/v1/users`  
 purpose: create a new user entry  

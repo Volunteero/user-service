@@ -7,6 +7,11 @@ module.exports = class UserHandler extends HandlerBase {
     super();
   }
 
+  /**
+   * Retrieves a complete list of users
+   * @param {*} req
+   * @param {*} res
+   */
   async getUsers(req, res) {
     const mapper = new UserMapper();
     const UserMap = mapper.getObjectMap();
@@ -19,6 +24,12 @@ module.exports = class UserHandler extends HandlerBase {
     res.status(UserHandler.getStatusCodes().OK).json(users);
   }
 
+  /**
+   * Finds a single user by the name attribute
+   * @param {*} req
+   * @param {*} res
+   * @return {null}
+   */
   async getUserByUsername(req, res) {
     const body = req.body;
     const mapper = new UserMapper();
@@ -41,6 +52,11 @@ module.exports = class UserHandler extends HandlerBase {
     res.status(UserHandler.getStatusCodes().OK).json(users.pop());
   }
 
+  /**
+   * Creates a new user document
+   * @param {*} req
+   * @param {*} res
+   */
   async createUser(req, res) {
     const body = req.body;
     const mapper = new UserMapper();
@@ -79,6 +95,12 @@ module.exports = class UserHandler extends HandlerBase {
     }
   }
 
+  /**
+   * Updates an existing user document
+   * @param {*} req
+   * @param {*} res
+   * @return {null}
+   */
   async updateUser(req, res) {
     const body = req.body;
     const mapper = new UserMapper();
@@ -113,6 +135,12 @@ module.exports = class UserHandler extends HandlerBase {
     }
   }
 
+  /**
+   * Removes a user with specified username attribute
+   * @param {*} req
+   * @param {*} res
+   * @return {null}
+   */
   async deleteUserByUsername(req, res) {
     const body = req.body;
     const mapper = new UserMapper();

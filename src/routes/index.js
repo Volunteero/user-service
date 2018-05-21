@@ -1,5 +1,6 @@
 'use strict';
 
+const errorHandling = require('../middleware/ErrorHandling');
 const usersRouter = require('./users');
 
 module.exports = () => {
@@ -10,7 +11,7 @@ module.exports = () => {
      * @return {Object}
      */
     init(app) {
-      app.use('/altar', usersRouter);
+      app.use('/altar', usersRouter, errorHandling);
       return app;
     },
   };

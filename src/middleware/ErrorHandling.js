@@ -9,13 +9,13 @@
  * @return {Object}
  */
 const handleError = (err, req, res, next) => {
-  req.log.error({
+  console.error({
     errorCode: `ServerError:${err.name}`,
     stack: err.stack,
   });
 
   // TODO: add some logic to select the handling behavior
-  return sendGenericErrorResponse();
+  return sendGenericErrorResponse(err, res);
 };
 
 /**

@@ -11,7 +11,7 @@ router
 router
   .put('/find', userHandler.getUserByUsername);
 router
-  .post('/', userHandler.createUser);
+  .post('/', AuthMiddleware, userHandler.createUser);
 router
   .put('/', AuthMiddleware, userHandler.updateUser);
 router

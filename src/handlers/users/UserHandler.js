@@ -103,11 +103,14 @@ module.exports = class UserHandler extends HandlerBase {
    */
   async updateUser(req, res) {
     const body = req.body;
+    const auth = req.user;
     const mapper = new UserMapper();
     const newUserSeed = mapper.resolveSeed(body);
     const UserMap = mapper.getObjectMap();
 
-    if (!body.username) {
+    console.log(auth);
+
+    if (!auth.username) {
       return UserHandler.respondWithError(
         res,
         UserHandler.getStatusCodes().BAD_REQUEST,
@@ -118,7 +121,7 @@ module.exports = class UserHandler extends HandlerBase {
     console.log(newUserSeed);
 
     const result = await UserMap.findOneAndUpdate(
-      {username: body.username},
+      {username: auth.username},
       newUserSeed
     );
     if (result) {

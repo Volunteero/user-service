@@ -34,4 +34,5 @@ const sendGenericErrorResponse = (err, res) => {
 
 module.exports = {
   handleError,
+  sendGenericErrorResponse,
 };

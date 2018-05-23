@@ -104,10 +104,6 @@ module.exports = class UserHandler extends HandlerBase {
   async updateUser(req, res) {
     const body = req.body;
     const auth = req.user;
-    const mapper = new UserMapper();
-    const newUserSeed = mapper.resolveSeed(body);
-    const UserMap = mapper.getObjectMap();
-
     console.log(auth);
 
     if (!auth.username) {
@@ -117,19 +113,44 @@ module.exports = class UserHandler extends HandlerBase {
         new Error('username is not specified'),
       );
     }
+    body.username = auth.username;
 
+    const mapper = new UserMapper();
+    const newUserSeed = mapper.resolveSeed(body);
+    const UserMap = mapper.getObjectMap();
     console.log(newUserSeed);
 
-    const result = await UserMap.findOneAndUpdate(
-      {username: auth.username},
-      newUserSeed
-    );
-    if (result) {
-      return res.status(UserHandler.getStatusCodes().OK).json({
-        'success': true,
-        'user': newUserSeed,
-      });
-    } else {
+    try {
+      const updateResult = await UserMap.findOneAndUpdate(
+        {username: auth.username},
+        newUserSeed
+      );
+      if (updateResult) {
+        return res.status(UserHandler.getStatusCodes().OK).json({
+          'success': true,
+          'user': newUserSeed,
+        });
+      } else {
+        // attempt to create a new document
+        try {
+          let newUser = new UserMap(newUserSeed);
+          const saveResult = await newUser.save();
+          console.info('Save result');
+          console.info(saveResult);
+          const seed = mapper.resolveSeed(newUser);
+          res.status(UserHandler.getStatusCodes().CREATED).json({
+            'success': true,
+            'user': seed,
+          });
+        } catch (error) {
+          return UserHandler.respondWithError(
+            res,
+            UserHandler.getStatusCodes().FORBIDDEN,
+            new Error('updated user not found'),
+          );
+        }
+      }
+    } catch (error) {
       return UserHandler.respondWithError(
         res,
         UserHandler.getStatusCodes().BAD_REQUEST,

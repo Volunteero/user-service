@@ -47,7 +47,7 @@ module.exports = class User {
   resolveSeed(body) {
     return Object.keys(schemaSeed).reduce((object, key) => {
       if (typeof body[key] !== 'undefined') {
-        object[key] = body[key] || '';
+        object[key] = body[key];
       }
       return object;
     }, {});

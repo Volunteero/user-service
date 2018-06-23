@@ -17,7 +17,7 @@ router
   .put('/', AuthMiddleware, userHandler.updateUser);
 router
   .put(
-    '/delete', AuthMiddleware, userHandler.deleteUserByUsername
+    '/delete', userHandler.deleteUserByUsername
   );
 router.post(
   '/:username/confirmEventParticipation',

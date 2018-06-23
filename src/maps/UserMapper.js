@@ -1,6 +1,8 @@
 'use strict';
 const mongoose = require('mongoose');
 
+// TODO: testing!
+
 const schemaSeed = {
   username: {
     type: String,
@@ -25,13 +27,24 @@ module.exports = class User {
     this.schema = userSchema;
   }
 
+  /**
+   * Produces an ODM mapper relative to the user type
+   * @return {MapModel}
+   */
   getObjectMap() {
     return mongoose.model(this.KEY, this.schema);
   }
 
+  /**
+   * Produces an schema compliant object from the given body
+   * @param {Object} body
+   * @return {Object}
+   */
   resolveSeed(body) {
     return Object.keys(schemaSeed).reduce((object, key) => {
-      object[key] = body[key] || '';
+      if (body[key]) {
+        object[key] = body[key] || '';
+      }
       return object;
     }, {});
   }

@@ -1,11 +1,14 @@
 'use strict';
 
 const express = require('express');
-const userHandler = new (require('../../handlers/users/UserHandler'))();
+const userHandler = new(require('../../handlers/users/UserHandler'))();
 
 let router = express.Router();
 
-router.post('/:username/confirmEventParticipation', userHandler.confirmEventParticipation)
+router.post(
+    '/:username/confirmEventParticipation',
+    userHandler.confirmEventParticipation
+);
 router.get('/', userHandler.getUsers);
 router.put('/find', userHandler.getUserByUsername);
 router.post('/', userHandler.createUser);

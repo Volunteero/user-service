@@ -110,3 +110,18 @@ body out: (_response_)
 	"success": true,
 }
 ```
+
+**POST**: `../altar/v1/users/:username/confirmEventParticipation`      
+purpose: add points to a user
+body in: (_request_)  
+```
+{
+	"points": 123
+}
+``` 
+body out: (_response_)  
+```
+{
+	"newPoints": 223,
+}
+```

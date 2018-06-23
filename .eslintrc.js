@@ -18,6 +18,7 @@ module.exports = {
         "FunctionExpression": false
       }
     }],
+    "linebreak-style": 0,
     "new-caps": {
       "properties": false
     }

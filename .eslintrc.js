@@ -20,7 +20,8 @@ module.exports = {
     }],
     "linebreak-style": 0,
     "new-caps": {
-      "properties": false
+      "properties": false,
+      "capIsNew": false
     }
   }
 };

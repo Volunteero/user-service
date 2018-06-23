@@ -4,6 +4,10 @@ const mongoose = require('mongoose');
 // TODO: testing!
 
 const schemaSeed = {
+  user_id: {
+    type: String,
+    required: [true],
+  },
   username: {
     type: String,
     required: [true],
@@ -16,8 +20,8 @@ const schemaSeed = {
   bio: String,
   points: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+  },
 };
 const userSchema = mongoose.Schema(schemaSeed);
 
@@ -42,7 +46,7 @@ module.exports = class User {
    */
   resolveSeed(body) {
     return Object.keys(schemaSeed).reduce((object, key) => {
-      if (body[key]) {
+      if (typeof body[key] !== 'undefined') {
         object[key] = body[key] || '';
       }
       return object;

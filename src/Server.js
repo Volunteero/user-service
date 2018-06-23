@@ -66,5 +66,9 @@ module.exports = class Server {
   shutDown() {
     console.info('Received kill signal, shutting down gracefully');
     process.exit(0);
+    setTimeout(()=>{
+      console.warn('Could not shut down gracefully... GRINDING HALT!');
+      process.exit(1);
+    }, 5000);
   }
 };

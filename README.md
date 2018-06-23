@@ -20,13 +20,15 @@ body out: (_response_)
 {
 	"success": true,
 	"user": {
+		"user_id": "124387561asd374",
 		"username": "dafoe2",
 		"first_name": "Friend",
 		"last_name": "",
 		"email": "",
 		"city": "",
 		"country": "",
-		"bio": ""
+		"bio": "",
+		"points": 0
 	}
 }
 ```     
@@ -46,13 +48,15 @@ body out: (_response_)
 {
 	"success": true,
 	"user": {
+		"user_id": "124387561asd374",
 		"username": "dafoe5",
 		"first_name": "Friend",
 		"last_name": "Dafoe",
 		"email": "",
 		"city": "",
 		"country": "",
-		"bio": ""
+		"bio": "",
+		"points": 0
 	}
 }
 ```    
@@ -63,15 +67,17 @@ body out: (_response_)
 ```
 [
 	{
+		"user_id": "124387561asd374",
 		"username": "bobski",
 		"first_name": "Bob",
 		"last_name": "Ski",
 		"email": "",
 		"city": "Paris",
 		"country": "USA",
-		"bio": ""
+		"bio": "",
+		"points": 0
 	},
-  ...
+	...
 ]
 ```
   
@@ -82,7 +88,14 @@ body in: (_request_)
 {
 	"username":"dafoe5"  
 }
-``` 
+```   
+or  
+```
+{
+	"user_id":"dafoe5"  
+}
+```  
+_note: if the input body contains both `user_id` and `username`, the preference is for the latter_  
 body out: (_response_)  
 ```
 {

@@ -11,12 +11,16 @@ router
 router
   .put('/find', userHandler.getUserByUsername);
 router
-  .post('/', AuthMiddleware, userHandler.createUser);
+  .post('/', userHandler.createUser);
 router
   .put('/', AuthMiddleware, userHandler.updateUser);
 router
   .put(
     '/delete', AuthMiddleware, userHandler.deleteUserByUsername
   );
+router.post(
+    '/:username/confirmEventParticipation',
+    userHandler.confirmEventParticipation
+);
 
 module.exports = router;

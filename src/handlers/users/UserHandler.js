@@ -44,7 +44,7 @@ module.exports = class UserHandler extends HandlerBase {
       );
     }
 
-    const results = await UserMap.find({username: username});
+    const results = await UserMap.find({ username: username });
     console.log(results);
     const users = results.map((document) => {
       return mapper.resolveSeed(document);
@@ -62,7 +62,7 @@ module.exports = class UserHandler extends HandlerBase {
     const mapper = new UserMapper();
     const UserMap = mapper.getObjectMap();
 
-    const user = await UserMap.findOne({username: body.username});
+    const user = await UserMap.findOne({ username: body.username });
     if (user !== null) {
       // user already exists
       UserHandler.respondWithError(
@@ -180,7 +180,7 @@ module.exports = class UserHandler extends HandlerBase {
     }
 
     const result = await UserMap.findOneAndRemove(
-      {username: body.username},
+      { username: body.username },
     );
     if (result) {
       return res.status(UserHandler.getStatusCodes().OK).json({
@@ -193,5 +193,71 @@ module.exports = class UserHandler extends HandlerBase {
         new Error('deleted user not found'),
       );
     }
+  }
+
+  async confirmEventParticipation(req, res) {
+
+    const body = req.body;
+    const mapper = new UserMapper();
+    const UserMap = mapper.getObjectMap();
+
+    // Get the points to add from the body
+    let pointsToAdd = body.points;
+    if (!pointsToAdd) {
+      return UserHandler.respondWithError(
+        res,
+        UserHandler.getStatusCodes().BAD_REQUEST,
+        new Error('pointsToAdd is not specified'),
+      );
+    }
+
+    // Get the user using the username in the route params
+    const username = req.params.username;
+    const user = await UserMap.findOne({ username });
+    if (null === user) {
+      return UserHandler.respondWithError(
+        res,
+        UserHandler.getStatusCodes().BAD_REQUEST,
+        new Error('UserNotFound'),
+      );
+    }
+
+    // Validate that the user has at least 0 points
+    if(null === user.points || 'undefined' === typeof user.points){
+
+      user.points = 0;
+    }
+
+    // Check if points to add is a positive number
+    if(pointsToAdd < 0){
+
+      pointsToAdd = 0;
+    }
+
+    // Add the pointsToAdd to the current points
+    const newPoints = user.points + pointsToAdd;
+
+    // Update the user
+    const result = await UserMap.updateOne({
+      username,
+      points: newPoints
+    });
+
+    // If everything went ok return a 200 
+    if(result.ok > 0){
+
+      res.status(200).json({
+        newPoints
+      });
+    }else{
+
+      // and 500 if we have errors
+      res.status(500).json({
+        success: false,
+        code: 'InternalServerError',
+        result
+      });
+    }
+   
   }
 };

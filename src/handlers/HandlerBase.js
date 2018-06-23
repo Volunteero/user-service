@@ -11,12 +11,6 @@ module.exports = class HandlerBase {
     };
   }
 
-  /**
-   * Handle error cases
-   * @param {Response} res - the response object default to the express handlers
-   * @param {Number} statusCode
-   * @param {Error} error
-   */
   static respondWithError(res, statusCode, error) {
     console.error(error);
     res.status(statusCode).json({

@@ -17,9 +17,6 @@ module.exports = class Server {
     this.mongooseDb = mongooseDb;
   }
 
-  /**
-   * Configures the server to use the needed settings and middleware
-   */
   setup() {
     // configure app settings
     this.app.set('env', process.env.ENV || 'dev');
@@ -37,9 +34,6 @@ module.exports = class Server {
     this.routes.init(this.app);
   }
 
-  /**
-   * Start the server instance
-   */
   start() {
     // connect db
     mongooseDb.connect(this.app.get('mongo_link'));
@@ -60,9 +54,6 @@ module.exports = class Server {
     });
   }
 
-  /**
-   * Shud down the server process
-   */
   shutDown() {
     console.info('Received kill signal, shutting down gracefully');
     process.exit(0);

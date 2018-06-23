@@ -7,11 +7,6 @@ module.exports = class UserHandler extends HandlerBase {
     super();
   }
 
-  /**
-   * Retrieves a complete list of users
-   * @param {*} req
-   * @param {*} res
-   */
   async getUsers(req, res) {
     const mapper = new UserMapper();
     const UserMap = mapper.getObjectMap();
@@ -24,12 +19,6 @@ module.exports = class UserHandler extends HandlerBase {
     res.status(UserHandler.getStatusCodes().OK).json(users);
   }
 
-  /**
-   * Finds a single user by the name attribute
-   * @param {*} req
-   * @param {*} res
-   * @return {null}
-   */
   async getUserByUsername(req, res) {
     const body = req.body;
     const mapper = new UserMapper();
@@ -52,11 +41,6 @@ module.exports = class UserHandler extends HandlerBase {
     res.status(UserHandler.getStatusCodes().OK).json(users.pop());
   }
 
-  /**
-   * Creates a new user document
-   * @param {*} req
-   * @param {*} res
-   */
   async createUser(req, res) {
     const body = req.body;
     const mapper = new UserMapper();
@@ -95,62 +79,32 @@ module.exports = class UserHandler extends HandlerBase {
     }
   }
 
-  /**
-   * Updates an existing user document
-   * @param {*} req
-   * @param {*} res
-   * @return {null}
-   */
   async updateUser(req, res) {
     const body = req.body;
-    const auth = req.user;
-    console.log(auth);
+    const mapper = new UserMapper();
+    const newUserSeed = mapper.resolveSeed(body);
+    const UserMap = mapper.getObjectMap();
 
-    if (!auth.username) {
+    if (!body.username) {
       return UserHandler.respondWithError(
         res,
         UserHandler.getStatusCodes().BAD_REQUEST,
         new Error('username is not specified'),
       );
     }
-    body.username = auth.username;
 
-    const mapper = new UserMapper();
-    const newUserSeed = mapper.resolveSeed(body);
-    const UserMap = mapper.getObjectMap();
     console.log(newUserSeed);
 
-    try {
-      const updateResult = await UserMap.findOneAndUpdate(
-        {username: auth.username},
-        newUserSeed
-      );
-      if (updateResult) {
-        return res.status(UserHandler.getStatusCodes().OK).json({
-          'success': true,
-          'user': newUserSeed,
-        });
-      } else {
-        // attempt to create a new document
-        try {
-          let newUser = new UserMap(newUserSeed);
-          const saveResult = await newUser.save();
-          console.info('Save result');
-          console.info(saveResult);
-          const seed = mapper.resolveSeed(newUser);
-          res.status(UserHandler.getStatusCodes().CREATED).json({
-            'success': true,
-            'user': seed,
-          });
-        } catch (error) {
-          return UserHandler.respondWithError(
-            res,
-            UserHandler.getStatusCodes().FORBIDDEN,
-            new Error('updated user not found'),
-          );
-        }
-      }
-    } catch (error) {
+    const result = await UserMap.findOneAndUpdate(
+      { username: body.username },
+      newUserSeed
+    );
+    if (result) {
+      return res.status(UserHandler.getStatusCodes().OK).json({
+        'success': true,
+        'user': newUserSeed,
+      });
+    } else {
       return UserHandler.respondWithError(
         res,
         UserHandler.getStatusCodes().BAD_REQUEST,
@@ -159,12 +113,6 @@ module.exports = class UserHandler extends HandlerBase {
     }
   }
 
-  /**
-   * Removes a user with specified username attribute
-   * @param {*} req
-   * @param {*} res
-   * @return {null}
-   */
   async deleteUserByUsername(req, res) {
     const body = req.body;
     const mapper = new UserMapper();

@@ -25,6 +25,50 @@ module.exports = class UserHandler extends HandlerBase {
   }
 
   /**
+  * Finds a single user by the name or id attribute
+  * @param {*} req
+  * @param {*} res
+  * @return {null}
+  */
+  async getUser(req, res) {
+    let users = [];
+    const self = this;
+    try {
+      try {
+        /**
+         * Try getting by username
+         */
+        users = await self.getUserByUsername(req, res);
+        console.log('All good');
+      } catch (error) {
+        /**
+         * Try getting by user_id
+         */
+        console.warn(error);
+        users = await self.getUserById(req, res);
+      }
+    } catch (error) {
+      /**
+       * If both failed, there is nothing we can do -> bail
+       */
+      console.warn(error);
+      return UserHandler.respondWithError(
+        res,
+        UserHandler.getStatusCodes().BAD_REQUEST,
+        error,
+      );
+    }
+
+    console.log('Get User: did not fail to lookup');
+    console.log(users);
+    if (users.length > 0) {
+      return res.status(UserHandler.getStatusCodes().OK).json(users.pop());
+    } else {
+      return res.status(UserHandler.getStatusCodes().NOT_FOUND).json({});
+    }
+  }
+
+  /**
    * Finds a single user by the name attribute
    * @param {*} req
    * @param {*} res
@@ -37,19 +81,39 @@ module.exports = class UserHandler extends HandlerBase {
 
     const username = body.username;
     if (!username) {
-      return UserHandler.respondWithError(
-        res,
-        UserHandler.getStatusCodes().BAD_REQUEST,
-        new Error('username is not specified'),
-      );
+      throw new Error('username is not specified');
     }
 
-    const results = await UserMap.find({ username: username });
+    const results = await UserMap.find({username: username});
     console.log(results);
     const users = results.map((document) => {
       return mapper.resolveSeed(document);
     });
-    res.status(UserHandler.getStatusCodes().OK).json(users.pop());
+    return users;
+  }
+
+  /**
+   * Finds a single user by the user_id attribute
+   * @param {*} req
+   * @param {*} res
+   * @return {null}
+   */
+  async getUserById(req, res) {
+    const body = req.body;
+    const mapper = new UserMapper();
+    const UserMap = mapper.getObjectMap();
+
+    const lookupUserId = body.user_id;
+    if (!lookupUserId) {
+      throw new Error('user_id is not specified');
+    }
+
+    const results = await UserMap.find({user_id: lookupUserId});
+    console.log(results);
+    const users = results.map((document) => {
+      return mapper.resolveSeed(document);
+    });
+    return users;
   }
 
   /**
@@ -62,7 +126,7 @@ module.exports = class UserHandler extends HandlerBase {
     const mapper = new UserMapper();
     const UserMap = mapper.getObjectMap();
 
-    const user = await UserMap.findOne({ username: body.username });
+    const user = await UserMap.findOne({username: body.username});
     if (user !== null) {
       // user already exists
       UserHandler.respondWithError(
@@ -180,7 +244,7 @@ module.exports = class UserHandler extends HandlerBase {
     }
 
     const result = await UserMap.findOneAndRemove(
-      { username: body.username },
+      {username: body.username},
     );
     if (result) {
       return res.status(UserHandler.getStatusCodes().OK).json({
@@ -196,7 +260,6 @@ module.exports = class UserHandler extends HandlerBase {
   }
 
   async confirmEventParticipation(req, res) {
-
     const body = req.body;
     const mapper = new UserMapper();
     const UserMap = mapper.getObjectMap();
@@ -213,7 +276,7 @@ module.exports = class UserHandler extends HandlerBase {
 
     // Get the user using the username in the route params
     const username = req.params.username;
-    const user = await UserMap.findOne({ username });
+    const user = await UserMap.findOne({username});
     if (null === user) {
       return UserHandler.respondWithError(
         res,
@@ -223,14 +286,12 @@ module.exports = class UserHandler extends HandlerBase {
     }
 
     // Validate that the user has at least 0 points
-    if(null === user.points || 'undefined' === typeof user.points){
-
+    if (null === user.points || 'undefined' === typeof user.points) {
       user.points = 0;
     }
 
     // Check if points to add is a positive number
-    if(pointsToAdd < 0){
-
+    if (pointsToAdd < 0) {
       pointsToAdd = 0;
     }
 
@@ -240,24 +301,21 @@ module.exports = class UserHandler extends HandlerBase {
     // Update the user
     const result = await UserMap.updateOne({
       username,
-      points: newPoints
+      points: newPoints,
     });
 
-    // If everything went ok return a 200 
-    if(result.ok > 0){
-
+    // If everything went ok return a 200
+    if (result.ok > 0) {
       res.status(200).json({
-        newPoints
+        newPoints,
       });
-    }else{
-
+    } else {
       // and 500 if we have errors
       res.status(500).json({
         success: false,
         code: 'InternalServerError',
-        result
+        result,
       });
     }
-   
   }
 };

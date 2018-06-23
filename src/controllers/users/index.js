@@ -8,8 +8,9 @@ let router = express.Router();
 
 router
   .get('/', userHandler.getUsers);
+// TODO: figure out how to work around the bind
 router
-  .put('/find', userHandler.getUserByUsername);
+  .put('/find', userHandler.getUser.bind(userHandler));
 router
   .post('/', userHandler.createUser);
 router
@@ -19,8 +20,8 @@ router
     '/delete', AuthMiddleware, userHandler.deleteUserByUsername
   );
 router.post(
-    '/:username/confirmEventParticipation',
-    userHandler.confirmEventParticipation
+  '/:username/confirmEventParticipation',
+  userHandler.confirmEventParticipation
 );
 
 module.exports = router;
